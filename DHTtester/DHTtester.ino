@@ -3,11 +3,11 @@
 
 #include "DHT.h"
 
-#define DHTPIN D4     // what digital pin we're connected to
+#define DHTPIN D3     // what digital pin we're connected to
 
 // Uncomment whatever type you're using!
-#define DHTTYPE DHT11   // DHT 11
-//#define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
+//#define DHTTYPE DHT11   // DHT 11
+#define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
 //#define DHTTYPE DHT21   // DHT 21 (AM2301)
 
 // Connect pin 1 (on the left) of the sensor to +5V
@@ -21,7 +21,8 @@
 // Note that older versions of this library took an optional third parameter to
 // tweak the timings for faster processors.  This parameter is no longer needed
 // as the current DHT reading algorithm adjusts itself to work on faster procs.
-DHT dht(DHTPIN, DHTTYPE);
+DHT dht(DHTPIN, DHTTYPE, 30);
+//DHT dht(DHTPIN, DHTTYPE);
 
 void setup() {
   Serial.begin(115200);
@@ -32,8 +33,17 @@ void setup() {
 
 void loop() {
   // Wait a few seconds between measurements.
-  delay(2000);
+  delay(500);
+  int chk = dht.read();
 
+    Serial.print("Read sensor: ");
+    switch (chk)
+    {
+        case 0: Serial.println("OK"); break;
+        case -1: Serial.println("Checksum error"); break;
+        case -2: Serial.println("Time out error"); break;
+        default: Serial.println("Unknown error"); break;
+    }
   // Reading temperature or humidity takes about 250 milliseconds!
   // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
   float h = dht.readHumidity();
@@ -66,4 +76,7 @@ void loop() {
   Serial.print(" *C ");
   Serial.print(hif);
   Serial.println(" *F");
+
+  char buffer [50];
+  Serial.println(buffer);
 }
